@@ -8,6 +8,7 @@ import com.uriellugo.udemyjunit.repositories.CuentaRepository;
 import org.apache.commons.lang3.SerializationUtils;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -51,13 +52,13 @@ class CuentaServiceImplTest {
         //bancoRepository = Mockito.mock(BancoRepository.class);
         //cuentaService = new CuentaServiceImpl(cuentaRepository, bancoRepository);
 
-        Mockito.when(cuentaRepository.findById(1L)).thenReturn(crearCuenta01());
-        Mockito.when(cuentaRepository.findById(2L)).thenReturn(crearCuenta02());
+        Mockito.when(cuentaRepository.findById(1L)).thenReturn(Optional.of(crearCuenta01()));
+        Mockito.when(cuentaRepository.findById(2L)).thenReturn(Optional.of(crearCuenta02()));
         // Implements Cloneable <-> DeepCopy without same reference
         //Banco bancoClone = Datos.crearBanco01(); // Opción 1 - Crear instancias nuevas a través de un método
         // Banco bancoClone = Datos.BANCO_01.clone(); // Opción 2 - Object.clone() e Interface Cloneable
         Banco bancoClone = SerializationUtils.clone(BANCO_01); // Opción 3 - Apache commons SerializationUtils e Interface Serializable
-        Mockito.when(bancoRepository.findById(1L)).thenReturn(bancoClone);
+        Mockito.when(bancoRepository.findById(1L)).thenReturn(Optional.of(bancoClone));
     }
 
     @DisplayName("Bean names")
@@ -90,8 +91,8 @@ class CuentaServiceImplTest {
 
         Mockito.verify(cuentaRepository, times(3)).findById(1L);
         Mockito.verify(cuentaRepository, times(3)).findById(2L);
-        Mockito.verify(cuentaRepository, times(2)).update(any(Cuenta.class));
-        Mockito.verify(bancoRepository, times(1)).update(any(Banco.class));
+        Mockito.verify(cuentaRepository, times(2)).save(any(Cuenta.class));
+        Mockito.verify(bancoRepository, times(1)).save(any(Banco.class));
 
         verify(cuentaRepository, times(6)).findById(anyLong());
         verify(cuentaRepository, never()).findAll();
@@ -119,8 +120,8 @@ class CuentaServiceImplTest {
 
         verify(cuentaRepository, times(3)).findById(1L);
         verify(cuentaRepository, times(2)).findById(2L);
-        verify(cuentaRepository, never()).update(any(Cuenta.class));
-        verify(bancoRepository, never()).update(any(Banco.class));
+        verify(cuentaRepository, never()).save(any(Cuenta.class));
+        verify(bancoRepository, never()).save(any(Banco.class));
 
         verify(cuentaRepository, never()).findAll();
     }

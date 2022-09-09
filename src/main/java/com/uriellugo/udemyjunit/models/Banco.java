@@ -1,16 +1,24 @@
 package com.uriellugo.udemyjunit.models;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "bancos")
 public class Banco implements Cloneable, Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String nombre;
-    private List<Cuenta> cuentas;
-    private Integer totalTransferencia;
+    private transient List<Cuenta> cuentas;
+
+    @Column(name = "total_transferencias")
+    private int totalTransferencia;
 
     public Banco() {
         cuentas = new ArrayList<>();
