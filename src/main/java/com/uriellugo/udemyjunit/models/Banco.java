@@ -1,11 +1,14 @@
 package com.uriellugo.udemyjunit.models;
 
+import lombok.ToString;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+@ToString
 @Entity
 @Table(name = "bancos")
 public class Banco implements Cloneable, Serializable {

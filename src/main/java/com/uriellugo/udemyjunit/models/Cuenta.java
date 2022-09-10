@@ -1,11 +1,13 @@
 package com.uriellugo.udemyjunit.models;
 
 import com.uriellugo.udemyjunit.exceptions.DineroInsuficienteException;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+@ToString
 @Entity
 @Table(name = "cuentas")
 public class Cuenta{
@@ -16,8 +18,7 @@ public class Cuenta{
     private String persona;
     private BigDecimal saldo;
 
-    @ManyToOne
-    @JoinColumn(name = "banco_id")
+    @Transient
     private Banco banco;
 
     public Cuenta() {}
