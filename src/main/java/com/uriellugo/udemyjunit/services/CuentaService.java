@@ -3,8 +3,13 @@ package com.uriellugo.udemyjunit.services;
 import com.uriellugo.udemyjunit.models.Cuenta;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface CuentaService {
+
+    List<Cuenta> findAll();
+
+    Cuenta save(Cuenta cuenta);
 
     Cuenta findById(Long id);
 

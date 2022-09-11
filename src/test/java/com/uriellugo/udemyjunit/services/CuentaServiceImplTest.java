@@ -8,6 +8,7 @@ import com.uriellugo.udemyjunit.repositories.CuentaRepository;
 import org.apache.commons.lang3.SerializationUtils;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -135,5 +136,45 @@ class CuentaServiceImplTest {
         assertSame(cuenta1, cuenta2);
 
         verify(cuentaRepository, times(2)).findById(1L);
+    }
+
+    @Test
+    void test_findAll() {
+        // Given
+        List<Cuenta> datos = Arrays.asList(crearCuenta01(), crearCuenta02());
+        when(cuentaRepository.findAll()).thenReturn(datos);
+
+        // When
+        List<Cuenta> cuentas = cuentaService.findAll();
+
+        // Then
+        assertNotNull(cuentas);
+        assertFalse(cuentas.isEmpty());
+        assertEquals(2, cuentas.size());
+        assertTrue(cuentas.contains(crearCuenta01()));
+
+        verify(cuentaRepository).findAll();
+    }
+
+    @Test
+    void test_save() {
+        // Given
+        Cuenta cuentaPepe = new Cuenta(null, "Pepe", new BigDecimal(3000L));
+        when(cuentaRepository.save(any())).thenAnswer(invocation -> {
+            Cuenta c = invocation.getArgument(0);
+            c.setId(3L);
+            return c;
+        });
+
+        // When
+        Cuenta cuenta = cuentaService.save(cuentaPepe);
+
+        // Then
+        assertNotNull(cuenta);
+        assertEquals("Pepe", cuenta.getPersona());
+        assertEquals(3L, cuenta.getId());
+        assertEquals(3000, cuenta.getSaldo().intValue());
+
+        verify(cuentaRepository).save(any());
     }
 }
