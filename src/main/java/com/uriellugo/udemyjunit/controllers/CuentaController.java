@@ -32,7 +32,7 @@ public class CuentaController {
 
         Map<String, Object> response = new HashMap<>();
         response.put("date", LocalDate.now().toString());
-        response.put("status", "ok");
+        response.put("status", "OK");
         response.put("mensaje", "Transferencia realizada con éxito");
         response.put("transaccion", transaccion);
 
