@@ -6,6 +6,7 @@ import com.uriellugo.udemyjunit.repositories.BancoRepository;
 import com.uriellugo.udemyjunit.repositories.CuentaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.NoSuchElementException;
@@ -24,23 +25,27 @@ public class CuentaServiceImpl implements CuentaService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Cuenta findById(Long id) {
         return cuentaRepository.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public int revisarTotalTransferencias(Long bancoId) {
         Banco banco = bancoRepository.findById(bancoId).orElseThrow(NoSuchElementException::new);
         return banco.getTotalTransferencia();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BigDecimal revisarSaldo(Long cuentaId) {
         Cuenta cuenta = cuentaRepository.findById(cuentaId).orElseThrow(NoSuchElementException::new);
         return cuenta.getSaldo();
     }
 
     @Override
+    @Transactional
     public void transferir(Long numCuentaOrigen, Long numCuentaDestino, BigDecimal monto, Long bancoId) {
         Cuenta cuentaOrigen = cuentaRepository.findById(numCuentaOrigen).orElseThrow(NoSuchElementException::new);
         cuentaOrigen.debito(monto);
