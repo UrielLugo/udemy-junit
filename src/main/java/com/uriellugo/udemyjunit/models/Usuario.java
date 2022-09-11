@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class Usuario {
 
     @Builder
-    public Usuario(String nombre, String apellido, String email, String numero, Byte[] pin, Integer edad) {
+    public Usuario(String nombre, String apellido, String email, String numero, Byte pin, Integer edad) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
@@ -34,7 +34,7 @@ public class Usuario {
 
     private String numero;
 
-    private Byte[] pin = {12, 21};
+    private Byte pin = 0x1A;
 
     private Integer edad;
 
