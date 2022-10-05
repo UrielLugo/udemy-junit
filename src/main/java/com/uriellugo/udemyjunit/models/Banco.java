@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @ToString
@@ -25,6 +26,21 @@ public class Banco implements Cloneable, Serializable {
 
     public Banco() {
         cuentas = new ArrayList<>();
+    }
+
+    public Banco(Long id, String nombre, List<Cuenta> cuentas, int totalTransferencia) {
+        this.id = id;
+        this.nombre = nombre;
+        this.cuentas = cuentas;
+        this.totalTransferencia = totalTransferencia;
+    }
+
+    private Banco(String... hola) {
+        Arrays.stream(hola).map(s -> s + " ").forEach(System.out::print);
+    }
+
+    private Banco(int i) {
+        System.out.println("Valor en constructor: " + i);
     }
 
     public Banco(Long id, String nombre, Integer totalTransferencia) {
