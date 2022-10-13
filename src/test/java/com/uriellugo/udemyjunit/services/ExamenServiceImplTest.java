@@ -3,8 +3,8 @@ package com.uriellugo.udemyjunit.services;
 import com.uriellugo.udemyjunit.models.Examen;
 import com.uriellugo.udemyjunit.repositories.ExamenRepository;
 import com.uriellugo.udemyjunit.repositories.PreguntasRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -128,7 +128,7 @@ class ExamenServiceImplTest {
     }
 
     @Test
-    void test_guardar_examen() {
+    void test_guardarExamen() {
 
         Examen newExamen = DatosExamen.EXAMEN;
         newExamen.setPreguntas(DatosExamen.MATH_PREGUNTAS);
@@ -149,13 +149,12 @@ class ExamenServiceImplTest {
     }
 
     @Test
-    void test_guardar_examen_id_incremental_clase_anonima() {
-        Examen newExamen = DatosExamen.EXAMEN;
-        newExamen.setPreguntas(DatosExamen.MATH_PREGUNTAS);
+    void test_guardarExamenWithIncrementalId_anonymousClass() {
+        Examen newExamen = new Examen(null, "Sistemas Embebidos");
 
         when(examenRepository.guardar(any(Examen.class))).then(new Answer<Examen>() {
 
-            Long sequency = 8L;
+            Long sequency = 10L;
 
             @Override
             public Examen answer(InvocationOnMock invocation) {
@@ -164,13 +163,59 @@ class ExamenServiceImplTest {
                 return examen;
             }
         });
+
+        // Then
+        Examen examen = service.guardar(newExamen);
+        assertNotNull(examen);
+        assertNotNull(examen.getId());
+        assertEquals(10L, examen.getId());
+        assertEquals("Sistemas Embebidos", examen.getNombre());
     }
 
     @Test
-    void test_guardar_examen_id_incremental_lambda() {
+    void test_guardarExamenWithIncrementalId_lambdaExpression() {
         Examen newExamen = DatosExamen.EXAMEN;
         newExamen.setPreguntas(DatosExamen.MATH_PREGUNTAS);
 
-        //when(examenRepository.guardar(any(Examen.class))).then()
+        when(examenRepository.guardar(any(Examen.class))).then(invocationOnMock -> {
+            long sequency = 10L;
+            Examen examen = invocationOnMock.getArgument(0);
+            examen.setId(sequency);
+            return examen;
+        });
+
+        // Then
+        Examen examen = service.guardar(newExamen);
+        assertNotNull(examen);
+        assertNotNull(examen.getId());
+        assertEquals(10L, examen.getId());
+        assertEquals("Física", examen.getNombre());
+    }
+
+    @Test
+    void test_examenWithException() {
+        when(examenRepository.findExamenById(isNull())).thenReturn(Optional.of(new Examen(null, "Corrupted")));
+        when(preguntasRepository.findQuestionsByExamenId(isNull())).thenThrow(IllegalArgumentException.class);
+
+        Exception exception = assertThrows(RuntimeException.class, () -> service.findExamenByIdWithQuestions(null));
+
+        assertEquals(IllegalArgumentException.class, exception.getClass(),
+                "No es una excepción de tipo: " + IllegalArgumentException.class.getSimpleName());
+
+        verify(examenRepository).findExamenById(isNull());
+        verify(preguntasRepository).findQuestionsByExamenId(isNull());
+    }
+
+    @Test
+    void test_argumentMatchers() {
+        when(examenRepository.findExamenById(anyLong())).thenReturn(Optional.of(DatosExamen.MATH_EXAMEN));
+        when(preguntasRepository.findQuestionsByExamenId(anyLong())).thenReturn(DatosExamen.MATH_PREGUNTAS);
+
+        service.findExamenByIdWithQuestions(anyLong());
+
+        verify(examenRepository).findExamenById(anyLong());
+        verify(preguntasRepository).findQuestionsByExamenId(DatosExamen.MATH_ID);
+        //verify(preguntasRepository).findQuestionsByExamenId(ArgumentMatchers.eq(5L)); // Métodos estáticos de ArgumentMatchers
+        verify(preguntasRepository).findQuestionsByExamenId(Mockito.argThat(arg -> arg != null && arg.equals(DatosExamen.MATH_ID)));
     }
 }

@@ -6,6 +6,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Esta clase la escribí cuando aún no tenía noción de como funcionaban las librerías de testing,
+ * por lo que ahora sé que usar valores 'static final' no es la mejor práctica para datos de prueba,
+ * ya que al ser aleatorios y sin guardar un estado sobre otro test, no debe conservar su estado como objeto,
+ * sino que debe mutar para siempre empezar con los mismos datos iniciales, lo podría cambiar pero sinceramente,
+ * prefiero usar ese tiempo en otras cosas, además de que quede como recordatorio de lo que no se debe de hacer
+ */
 public class DatosExamen {
 
     public static final Long MATH_ID = 5L;
