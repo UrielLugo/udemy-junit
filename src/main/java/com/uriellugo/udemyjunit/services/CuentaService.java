@@ -13,6 +13,8 @@ public interface CuentaService {
 
     Cuenta findById(Long id);
 
+    void deleteById(Long id);
+
     int revisarTotalTransferencias(Long bancoId);
 
     BigDecimal revisarSaldo(Long cuentaId);
