@@ -1,8 +1,8 @@
 package com.uriellugo.udemyjunit.services;
 
 import com.uriellugo.udemyjunit.models.Examen;
-import com.uriellugo.udemyjunit.repositories.ExamenRepository;
-import com.uriellugo.udemyjunit.repositories.PreguntasRepository;
+import com.uriellugo.udemyjunit.repositories.ExamenRepositoryImpl;
+import com.uriellugo.udemyjunit.repositories.PreguntasRepositoryImpl;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -22,10 +22,10 @@ import static org.mockito.Mockito.*;
 class ExamenServiceImplTest {
 
     @Mock
-    ExamenRepository examenRepository;
+    ExamenRepositoryImpl examenRepository;
 
     @Mock
-    PreguntasRepository preguntasRepository;
+    PreguntasRepositoryImpl preguntasRepository;
 
     @InjectMocks
     ExamenServiceImpl service;
@@ -350,5 +350,22 @@ class ExamenServiceImplTest {
 
         verify(preguntasRepository).guardarVarias(anyList());
         verify(examenRepository, times(1)).guardar(any(Examen.class));
+    }
+
+    @Test
+    void test_doCallRealMethod() {
+        when(examenRepository.findAll()).thenReturn(examList);
+        // Aquí llama a un método mock, esta vez llamaremos al método real
+        //when(preguntasRepository.findQuestionsByExamenId(anyLong())).thenReturn(mathQuestions);
+
+        // Este método se debería de user solamente para invocar métodos reales de terceros
+        // Alguna clase, servicio o API de terceros
+        doCallRealMethod().when(preguntasRepository).findQuestionsByExamenId(anyLong());
+
+        Optional<Examen> examenOpt = service.findExamenPorNombre("Matemáticas");
+        assertTrue(examenOpt.isPresent());
+        Examen examen = examenOpt.get();
+        assertEquals(5L, examen.getId());
+        assertEquals("Matemáticas", examen.getNombre());
     }
 }
