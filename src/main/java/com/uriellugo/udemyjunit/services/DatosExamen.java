@@ -4,9 +4,12 @@ import com.uriellugo.udemyjunit.models.Examen;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class DatosExamen {
+
+    private DatosExamen() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static final Long MATH_ID = 5L;
 
