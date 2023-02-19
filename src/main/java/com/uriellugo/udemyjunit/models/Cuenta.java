@@ -19,6 +19,7 @@ public class Cuenta{
     private BigDecimal saldo;
 
     @Transient
+    @ToString.Exclude
     private Banco banco;
 
     public Cuenta() {}
