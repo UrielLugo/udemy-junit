@@ -2,15 +2,18 @@ package com.uriellugo.udemyjunit;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.*;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.support.ResourcePropertySource;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.stream.StreamSupport;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,5 +63,45 @@ class UdemyJUnitApplicationTests {
 			System.out.println("PropertySource.getSource() = " + next.getSource());
 			System.out.println();
 		}
+	}
+
+	@Test
+	void testEnvironment_activeProfiles() {
+		assertNotNull(environment);
+		Arrays.stream(environment.getActiveProfiles()).forEach(System.out::println);
+	}
+
+	@Test
+	void testEnvironment_defaultProfiles() {
+		assertNotNull(environment);
+		Arrays.stream(environment.getDefaultProfiles()).forEach(System.out::println);
+	}
+
+	@Test
+	void test_resourcePropertySources() {
+		assertNotNull(environment);
+		Properties properties = new Properties();
+		MutablePropertySources propSrcs = ((AbstractEnvironment) environment).getPropertySources();
+		StreamSupport.stream(propSrcs.spliterator(), false)
+				.filter(ps -> ps instanceof ResourcePropertySource)
+				.map(ps -> ((ResourcePropertySource) ps).getPropertyNames())
+				.flatMap(Arrays::stream)
+				.forEach(propName -> properties.setProperty(propName, environment.getProperty(propName)));
+		properties.forEach((key, value) -> System.out.println(key + " : " + value));
+	}
+
+	@Test
+	void test_ymlPropertySource() {
+		assertNotNull(environment);
+		MutablePropertySources propSrcs = ((AbstractEnvironment) environment).getPropertySources();
+		StreamSupport.stream(propSrcs.spliterator(), false)
+				.filter(ps -> ps instanceof ResourcePropertySource)
+				.map(ps -> {
+					YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean();
+					yaml.setResources(new ClassPathResource("application.yml"));
+					return yaml.getObject();
+				})
+				.filter(Objects::nonNull)
+				.forEach(prop -> prop.forEach((key, value) -> System.out.println(key + " : " + value)));
 	}
 }
