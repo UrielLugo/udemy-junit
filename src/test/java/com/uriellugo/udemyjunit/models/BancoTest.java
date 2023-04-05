@@ -24,6 +24,7 @@ class BancoTest {
     void test_reflectFields() {
         Field[] declaredFields = Banco.class.getDeclaredFields();
         List<String> fieldsList = Arrays.stream(declaredFields)
+                .filter(f -> !f.isSynthetic()) // Avoid '$jacocoData' field given by "jacocoTestReport"
                 .map(Field::getName)
                 .collect(Collectors.toList());
 
