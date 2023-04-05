@@ -4,6 +4,7 @@ import com.uriellugo.udemyjunit.models.Banco;
 import com.uriellugo.udemyjunit.models.Cuenta;
 import com.uriellugo.udemyjunit.repositories.BancoRepository;
 import com.uriellugo.udemyjunit.repositories.CuentaRepository;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -17,8 +18,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+@Tag("integracion_jpa")
 @DataJpaTest
-public class IntegracionJpaTest {
+class IntegracionJpaTest {
 
     @Autowired
     CuentaRepository cuentaRepository;
@@ -124,7 +126,7 @@ public class IntegracionJpaTest {
 
         cuentaRepository.delete(cuenta);
 
-        assertThrows(NoSuchElementException.class, () -> cuentaRepository.findById(2L).orElseThrow(NoSuchElementException::new));
+        assertThrows(NoSuchElementException.class, () -> cuentaRepository.findById(2L));
 
         assertEquals(1, cuentaRepository.findAll().size());
     }
